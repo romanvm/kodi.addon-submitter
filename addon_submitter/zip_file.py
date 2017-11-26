@@ -56,3 +56,11 @@ class ZippedAddon:
         :return: if addon is zipped in a folder
         """
         return self._has_folder
+
+    def extract(self, path: str = None):
+        """
+        Extract archive
+
+        :param path: directory to extract the zip to
+        """
+        self._zipfile.extractall(path)
