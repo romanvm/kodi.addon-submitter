@@ -17,7 +17,7 @@ class ZippedAddon:
         self._zipfile = ZipFile(fo)
         self._id = None
         self._version = None
-        self._has_folder = False
+        self._is_folder = False
         self._parse_zip()
 
     def _parse_zip(self):
@@ -33,7 +33,7 @@ class ZippedAddon:
         self._version = doc.firstChild.getAttribute('version')
         for fn in namelist:
             if fn == self._id + '/':
-                self._has_folder = True
+                self._is_folder = True
                 break
 
     @property
@@ -51,11 +51,11 @@ class ZippedAddon:
         return self._version
 
     @property
-    def has_folder(self) -> bool:
+    def is_folder(self) -> bool:
         """
         :return: if addon is zipped in a folder
         """
-        return self._has_folder
+        return self._is_folder
 
     def extract(self, path: str = None) -> None:
         """

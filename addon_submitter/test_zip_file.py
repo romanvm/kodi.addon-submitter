@@ -16,4 +16,4 @@ class ZippedAddonTestCase(TestCase):
             zip_addon = ZippedAddon(fo)
             self.assertEqual(zip_addon.id, 'plugin.video.example')
             self.assertEqual(zip_addon.version, '2.2.0')
-            self.assertTrue(zip_addon.has_folder)
+            self.assertTrue(zip_addon.is_folder)
