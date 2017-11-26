@@ -2,9 +2,9 @@
 # Author: Roman Miroshnychenko aka Roman V.M.
 # E-mail: roman1972@gmail.com
 
+from xml.dom.minidom import parse
 from zipfile import ZipFile
 from typing import BinaryIO
-from xml.dom.minidom import parse
 
 
 class ZippedAddon:
