@@ -9,7 +9,7 @@ from typing import BinaryIO
 
 class ZippedAddon:
     """Represents a zipped addon"""
-    def __init__(self, fo: BinaryIO):
+    def __init__(self, fo: BinaryIO) -> None:
         """
         :param fo: file-like object with zipped addon
         :raises FileNotFoundError: if zip has no addon.xml file
@@ -57,7 +57,7 @@ class ZippedAddon:
         """
         return self._has_folder
 
-    def extract(self, path: str = None):
+    def extract(self, path: str = None) -> None:
         """
         Extract archive
 
