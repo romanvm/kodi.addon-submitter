@@ -1,6 +1,7 @@
 # coding: utf-8
 # Author: Roman Miroshnychenko aka Roman V.M.
 # E-mail: roman1972@gmail.com
+"""Module for working with zipped addons"""
 
 from xml.dom.minidom import parse
 from zipfile import ZipFile
