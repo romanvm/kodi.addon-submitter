@@ -9,15 +9,15 @@ from django.conf import settings
 from .zip_file import ZippedAddon
 
 REPO_URL_MASK = 'https://{gh_token}@github.com/{user}/{repo}.git'
+GH_TOKEN = os.environ['GH_TOKEN']
 
 
-def create_addon_directory(workdir: str, zipaddon: ZippedAddon) -> str:
+def create_addon_directory(workdir: str, zipaddon: ZippedAddon) -> None:
     """
     Create a directory for addon
 
     :param workdir: working directory
     :param zipaddon: zipped addon
-    :return: addon directory
     """
     if not zipaddon.is_folder:
         os.chdir(workdir)
@@ -26,7 +26,6 @@ def create_addon_directory(workdir: str, zipaddon: ZippedAddon) -> str:
     else:
         addon_dir = workdir
     zipaddon.extract(addon_dir)
-    return addon_dir
 
 
 def prepare_pr_branch(repo: str, branch: str, workdir: str,
@@ -42,7 +41,7 @@ def prepare_pr_branch(repo: str, branch: str, workdir: str,
     """
     os.chdir(workdir)
     repo_url = REPO_URL_MASK.format(
-        gh_token=os.environ['GH_TOKEN'],
+        gh_token=GH_TOKEN,
         user= settings.PROXY_USER,
         repo=repo
     )
@@ -68,3 +67,13 @@ def prepare_pr_branch(repo: str, branch: str, workdir: str,
         id=addon_id,
         version=addon_version))
     os.system('git push --force --quiet origin {0}'.format(addon_id))
+
+
+def prepare_pull_reqest(zipaddon: ZippedAddon, repo: str, branch: str) -> None:
+    workdir = settings.WORKDIR
+    try:
+        create_addon_directory(workdir, zipaddon)
+        prepare_pr_branch(repo, branch, workdir, zipaddon.id, zipaddon.version)
+    finally:
+        shutil.rmtree(os.path.join(workdir, repo), ignore_errors=True)
+        shutil.rmtree(os.path.join(workdir, zipaddon.id), ignore_errors=True)
