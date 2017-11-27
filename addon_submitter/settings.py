@@ -119,5 +119,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+# Project-specific settings
 WORKDIR = os.path.join(BASE_DIR, 'workdir')
+PROXY_USER = 'romanvm1972'
+USER_NAME = 'Roman Miroshnychenko'
+USER_EMAIL = 'roman1972@gmail.com'
+UPSTREAM_USER = 'romanvm'
