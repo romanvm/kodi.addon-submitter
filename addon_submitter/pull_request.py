@@ -29,11 +29,10 @@ def create_addon_directory(workdir: str, zipaddon: ZippedAddon) -> str:
     return addon_dir
 
 
-def prepare_pull_request(repo: str, branch: str, workdir: str,
-                         addon_id: str, addon_version: str) -> None:
+def prepare_pr_branch(repo: str, branch: str, workdir: str,
+                      addon_id: str, addon_version: str) -> None:
     """
-    Add addon to repository and push it to the proxy repo to create
-    a pull request
+    Create a git branch for pull request
 
     :param repo: addon repository name
     :param branch: branch to submit the addon to
