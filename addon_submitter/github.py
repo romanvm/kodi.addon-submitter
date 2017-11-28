@@ -107,65 +107,21 @@ def prepare_pr_branch(repo: str, branch: str, workdir: str,
     execute(['git', 'push', '-f', 'origin', addon_id])
 
 
-def open_pull_request(repo: str, branch: str, addon_id: str,
-                      addon_version: str, description: str) -> None:
-    """
-    Open a pull request on GitHub
-
-    :param repo: addon repository
-    :param branch: Git branch (Kodi version codename)
-    :param addon_id: addon ID
-    :param addon_version: addon version
-    :param description: PR description
-    :raises GitHubError: when failed to create a PR
-    """
-    url = GH_API + PR_ENPDOINT.format(
-        user=settings.UPSTREAM_USER,
-        repo=repo
-    )
-    payload = {
-        'title': '[{addon}] {version}'.format(
-            addon=addon_id,
-            version=addon_version),
-        'head': '{user}:{branch}'.format(
-            user=settings.PROXY_USER,
-            branch=addon_id
-        ),
-        'base': branch,
-        'body': description
-    }
-    resp = requests.post(url, json=payload, auth=(settings.PROXY_USER, GH_TOKEN))
-    logger.debug('GitHub response: {resp}: {content}'.format(
-        resp=resp,
-        content=pformat(resp.json())
-    ))
-    if resp.status_code != 201:
-        raise GitHubError(
-            'Failed to create a pull request with status code {0}!'.format(
-                resp.status_code)
-        )
-
-
-def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str,
-                       open_pr: bool, description: str = '') -> None:
+def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str) -> None:
     """
     Prepare the proxy repository for submitting a pull request
 
     :param zipaddon: zipped addon
     :param repo: addon repository name
     :param branch: git branch (Kodi version codename)
-    :param open_pr: if True, open a new PR
-    :param description: description for a new PR
     """
     workdir = settings.WORKDIR
     try:
         create_addon_directory(workdir, zipaddon)
         prepare_pr_branch(repo, branch, workdir, zipaddon.id, zipaddon.version)
-        if open_pr:
-            open_pull_request(repo, branch, zipaddon.id,
-                              zipaddon.version, description)
     except Exception:
         logging.exception('Error while preparing pull request!')
+        raise
     finally:
         os.chdir(workdir)
         if sys.platform == 'win32':
@@ -204,6 +160,48 @@ def ping_gh_user(gh_user: str, repo: str, pr_number: int) -> None:
         )
 
 
+def open_pull_request(repo: str, branch: str, addon_id: str,
+                      addon_version: str, description: str) -> int:
+    """
+    Open a pull request on GitHub
+
+    :param repo: addon repository
+    :param branch: Git branch (Kodi version codename)
+    :param addon_id: addon ID
+    :param addon_version: addon version
+    :param description: PR description
+    :raises GitHubError: when failed to create a PR
+    :return: Pull request #
+    """
+    url = GH_API + PR_ENPDOINT.format(
+        user=settings.UPSTREAM_USER,
+        repo=repo
+    )
+    payload = {
+        'title': '[{addon}] {version}'.format(
+            addon=addon_id,
+            version=addon_version),
+        'head': '{user}:{branch}'.format(
+            user=settings.PROXY_USER,
+            branch=addon_id
+        ),
+        'base': branch,
+        'body': description
+    }
+    resp = requests.post(url, json=payload, auth=(settings.PROXY_USER, GH_TOKEN))
+    content = resp.json()
+    logger.debug('GitHub response: {resp}: {content}'.format(
+        resp=resp,
+        content=pformat(content)
+    ))
+    if resp.status_code != 201:
+        raise GitHubError(
+            'Failed to create a pull request with status code {0}!'.format(
+                resp.status_code)
+        )
+    return content['number']
+
+
 def main():
     import sys
     sys.path.append(settings.BASE_DIR)
@@ -213,7 +211,11 @@ def main():
     description = 'Please accept this cool new addon to the repository'
     with open(os.path.join(settings.BASE_DIR,
                            'test_data', addon), 'rb') as fo:
-        prepare_repository(ZippedAddon(fo), repo, branch, False, description)
+        zipaddon = ZippedAddon(fo)
+        prepare_repository(zipaddon, repo, branch)
+        pr_no = open_pull_request(repo, branch, zipaddon.id,
+                                  zipaddon.version, description)
+        ping_gh_user('romanvm1972', repo, pr_no)
 
 
 if __name__ == '__main__':

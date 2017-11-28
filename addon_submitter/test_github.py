@@ -29,8 +29,11 @@ class GitHubTestCase(TestCase):
     def test_git_hub_api(self, mock_requests):
         mock_resp = mock.MagicMock()
         mock_resp.status_code = 201
-        mock_resp.json.return_value = {'foo': 'bar'}
+        mock_resp.json.return_value = {'number': 1}
         mock_requests.post.return_value = mock_resp
-        open_pull_request('repo-plugins', 'krypton',
-                          'plugin.video.foo', '0.0.1', 'Cool video plugin')
+        assert open_pull_request('repo-plugins',
+                                 'krypton',
+                                 'plugin.video.foo',
+                                 '0.0.1',
+                                 'Cool video plugin') == 1
         ping_gh_user('superuser', 'repo-plugins', 1)
