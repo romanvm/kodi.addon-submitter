@@ -5,12 +5,17 @@
 
 import os
 import logging
+import requests
 import shutil
 import subprocess
+import sys
+from pprint import pformat
 from django.conf import settings
 from addon_submitter.zip_file import ZippedAddon
 
 REPO_URL_MASK = 'https://{gh_token}@github.com/{user}/{repo}.git'
+GH_API = 'https://api.github.com'
+PR_ENPDOINT = '/repos/{user}/{repo}/pulls'
 GH_TOKEN = os.environ['GH_TOKEN']
 
 logger = logging.getLogger(__name__)
@@ -97,16 +102,73 @@ def prepare_pr_branch(repo: str, branch: str, workdir: str,
     execute(['git', 'push', '-f', 'origin', addon_id])
 
 
-def prepare_pull_request(zipaddon: ZippedAddon, repo: str, branch: str) -> None:
+def open_pull_request(repo: str, branch: str, addon_id: str,
+                      addon_version: str, description: str) -> None:
+    """
+    Open a pull request on GitHub
+
+    :param repo: addon repository
+    :param branch: Git branch (Kodi version codename)
+    :param addon_id: addon ID
+    :param addon_version: addon version
+    :param description: PR description
+    """
+    url = GH_API + PR_ENPDOINT.format(
+        user=settings.UPSTREAM_USER,
+        repo=repo
+    )
+    payload = {
+        'title': '[{addon}] {version}'.format(
+            addon=addon_id,
+            version=addon_version),
+        'head': '{user}:{branch}'.format(
+            user=settings.PROXY_USER,
+            branch=addon_id
+        ),
+        'base': branch,
+        'body': description
+    }
+    resp = requests.post(url, json=payload, auth=(settings.PROXY_USER, GH_TOKEN))
+    logger.debug('GitHub response: {resp}: {content}'.format(
+        resp=resp,
+        content=pformat(resp.json())
+    ))
+    if resp.status_code != 201:
+        raise RuntimeError(
+            'Failed to create a pull request with status code {0}!'.format(
+                resp.status_code)
+        )
+
+
+def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str,
+                       open_pr: bool, description: str = '') -> None:
+    """
+    Prepare the proxy repository for submitting a pull request
+
+    :param zipaddon: zipped addon
+    :param repo: addon repository name
+    :param branch: git branch (Kodi version codename)
+    :param open_pr: if True, open a new PR
+    :param description: description for a new PR
+    """
     workdir = settings.WORKDIR
     try:
         create_addon_directory(workdir, zipaddon)
         prepare_pr_branch(repo, branch, workdir, zipaddon.id, zipaddon.version)
+        if open_pr:
+            open_pull_request(repo, branch, zipaddon.id,
+                              zipaddon.version, description)
     except Exception:
         logging.exception('Error while preparing pull request!')
     finally:
-        # shutil.rmtree(os.path.join(workdir, repo), ignore_errors=True)
-        shutil.rmtree(os.path.join(workdir, zipaddon.id), ignore_errors=True)
+        os.chdir(workdir)
+        if sys.platform == 'win32':
+            os.system('attrib -h -s /s')
+            os.system('rd {0} /s /q'.format(os.path.join(workdir, repo)))
+            os.system('rd {0} /s /q'.format(os.path.join(workdir, zipaddon.id)))
+        else:
+            shutil.rmtree(os.path.join(workdir, repo), ignore_errors=True)
+            shutil.rmtree(os.path.join(workdir, zipaddon.id), ignore_errors=True)
 
 
 def main():
@@ -115,9 +177,10 @@ def main():
     repo = 'repo-scripts'
     branch = 'krypton'
     addon = 'plugin.video.example-2.2.0.zip'
+    description = 'Please accept this cool new addon to the repository'
     with open(os.path.join(settings.BASE_DIR,
                            'test_data', addon), 'rb') as fo:
-        prepare_pull_request(ZippedAddon(fo), repo, branch)
+        prepare_repository(ZippedAddon(fo), repo, branch, False, description)
 
 
 if __name__ == '__main__':
