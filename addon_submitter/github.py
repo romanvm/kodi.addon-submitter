@@ -40,7 +40,7 @@ def execute(args: list) -> None:
     """
     call_string = ' '.join(args)
     logging.debug('Executing: ' + call_string)
-    res = subprocess.call(args)
+    res = subprocess.call(args, shell=True)
     if res:
         raise RuntimeError('Call {call} returned error code {res}!'.format(
             call=call_string,
