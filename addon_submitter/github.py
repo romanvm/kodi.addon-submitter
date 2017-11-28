@@ -16,6 +16,7 @@ from addon_submitter.zip_file import ZippedAddon
 REPO_URL_MASK = 'https://{gh_token}@github.com/{user}/{repo}.git'
 GH_API = 'https://api.github.com'
 PR_ENPDOINT = '/repos/{user}/{repo}/pulls'
+COMMENT_ENDPOINT = '/repos/{user}/{repo}/issues/{number}/comments'
 GH_TOKEN = os.environ['GH_TOKEN']
 
 logger = logging.getLogger(__name__)
@@ -24,6 +25,10 @@ if settings.DEBUG:
 else:
     level = logging.INFO
 logger.setLevel(level)
+
+
+class GitHubError(Exception):
+    pass
 
 
 def execute(args: list) -> None:
@@ -112,6 +117,7 @@ def open_pull_request(repo: str, branch: str, addon_id: str,
     :param addon_id: addon ID
     :param addon_version: addon version
     :param description: PR description
+    :raises GitHubError: when failed to create a PR
     """
     url = GH_API + PR_ENPDOINT.format(
         user=settings.UPSTREAM_USER,
@@ -134,7 +140,7 @@ def open_pull_request(repo: str, branch: str, addon_id: str,
         content=pformat(resp.json())
     ))
     if resp.status_code != 201:
-        raise RuntimeError(
+        raise GitHubError(
             'Failed to create a pull request with status code {0}!'.format(
                 resp.status_code)
         )
@@ -169,6 +175,33 @@ def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str,
         else:
             shutil.rmtree(os.path.join(workdir, repo), ignore_errors=True)
             shutil.rmtree(os.path.join(workdir, zipaddon.id), ignore_errors=True)
+
+
+def ping_gh_user(gh_user: str, repo: str, pr_number: int) -> None:
+    """
+    Ping GitHub user when creating a pull request
+
+    :param gh_user: GitHub username
+    :param repo: GitHub repository
+    :param pr_number: pull request number
+    """
+    url = GH_API + COMMENT_ENDPOINT.format(
+        user=settings.UPSTREAM_USER,
+        repo=repo,
+        number=pr_number
+    )
+    resp = requests.post(url,
+                         json={'body': 'Ping @{0}'.format(gh_user)},
+                         auth=(settings.PROXY_USER, GH_TOKEN))
+    logger.debug('GitHub response: {resp}: {content}'.format(
+        resp=resp,
+        content=pformat(resp.json())
+    ))
+    if resp.status_code != 201:
+        raise GitHubError(
+            'Failed to post a comment to a PR with status code {0}!'.format(
+                resp.status_code)
+        )
 
 
 def main():
