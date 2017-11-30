@@ -10,20 +10,16 @@ from .github import *
 
 
 class GitHubTestCase(TestCase):
-    def test_execute(self):
-        execute(['echo', 'This is test!'])
-
-    def test_create_addon_directory(self):
-        mock_zip = mock.MagicMock()
-        mock_zip.is_folder = True
-        create_addon_directory('/foo/bar', mock_zip)
-
     @mock.patch('addon_submitter.github.os')
-    @mock.patch('addon_submitter.github.execute')
     @mock.patch('addon_submitter.github.shutil')
-    def test_prepare_addon_branch(self, *args):
-        prepare_pr_branch('repo-plugins', 'krypton', '/foo',
-                          'plugin.video.foo', '0.0.1')
+    @mock.patch('addon_submitter.github.subprocess')
+    def test_prepare_repository(self, m_subpr, *args):
+        m_subpr.call.return_value = 0
+        mock_zipaddon = mock.MagicMock()
+        mock_zipaddon.id = 'plugin.video.foo'
+        mock_zipaddon.version = '0.0.1'
+        mock_zipaddon.is_folder = True
+        prepare_repository(mock_zipaddon, 'repo-plugins', 'krypton')
 
     @mock.patch('addon_submitter.github.requests')
     def test_git_hub_api(self, mock_requests):
