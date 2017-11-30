@@ -36,4 +36,4 @@ class GitHubTestCase(TestCase):
                                  'plugin.video.foo',
                                  '0.0.1',
                                  'Cool video plugin') == 1
-        ping_gh_user('superuser', 'repo-plugins', 1)
+        post_comment('repo-plugins', 1, 'Hello!')
