@@ -6,7 +6,7 @@ import os
 from unittest import TestCase, mock
 
 os.environ.setdefault('GH_TOKEN', 'secret_token')
-from .github import *
+from ..github import *
 
 
 class GitHubTestCase(TestCase):

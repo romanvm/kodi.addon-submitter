@@ -5,7 +5,7 @@
 import os
 from unittest import TestCase
 from django.conf import settings
-from .zip_file import ZippedAddon
+from ..zip_file import ZippedAddon
 
 
 class ZippedAddonTestCase(TestCase):
