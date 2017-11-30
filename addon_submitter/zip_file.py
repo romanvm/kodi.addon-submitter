@@ -7,6 +7,8 @@ from xml.dom.minidom import parse
 from zipfile import ZipFile
 from typing import BinaryIO
 
+__all__ = ['ZippedAddon']
+
 
 class ZippedAddon:
     """Represents a zipped addon"""
