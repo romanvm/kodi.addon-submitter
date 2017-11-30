@@ -1,0 +1,10 @@
+notifications:
+  email: false
+language: python
+python: "3.5"
+before_install:
+  - pip install pipenv
+install:
+  - pipenv install
+script:
+  - pipenv run python manage.py test
