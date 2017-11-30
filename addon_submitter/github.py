@@ -133,13 +133,13 @@ def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str) -> None:
             shutil.rmtree(os.path.join(workdir, zipaddon.id), ignore_errors=True)
 
 
-def ping_gh_user(gh_user: str, repo: str, pr_number: int) -> None:
+def post_comment(repo: str, pr_number: int, comment: str) -> None:
     """
-    Ping GitHub user when creating a pull request
+    Post a comment to GitHub pull request
 
-    :param gh_user: GitHub username
     :param repo: GitHub repository
     :param pr_number: pull request number
+    :param comment: comment text
     """
     url = GH_API + COMMENT_ENDPOINT.format(
         user=settings.UPSTREAM_USER,
@@ -147,7 +147,7 @@ def ping_gh_user(gh_user: str, repo: str, pr_number: int) -> None:
         number=pr_number
     )
     resp = requests.post(url,
-                         json={'body': 'Ping @{0}'.format(gh_user)},
+                         json={'body': comment},
                          auth=(settings.PROXY_USER, GH_TOKEN))
     logger.debug('GitHub response: {resp}: {content}'.format(
         resp=resp,
@@ -215,7 +215,7 @@ def main():
         prepare_repository(zipaddon, repo, branch)
         pr_no = open_pull_request(repo, branch, zipaddon.id,
                                   zipaddon.version, description)
-        ping_gh_user('romanvm1972', repo, pr_no)
+        post_comment(repo, pr_no, 'Ping @romanvm1972')
 
 
 if __name__ == '__main__':
