@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import sys
 from pprint import pformat
+from typing import List
 from django.conf import settings
 from addon_submitter.zip_file import ZippedAddon
 
@@ -34,7 +35,7 @@ class GitHubError(Exception):
     pass
 
 
-def _execute(args: list) -> None:
+def _execute(args: List[str]) -> None:
     """
     Execute a console command
 
