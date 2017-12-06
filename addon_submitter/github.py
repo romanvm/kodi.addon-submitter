@@ -153,11 +153,11 @@ def post_comment(repo: str, pr_number: int, comment: str) -> None:
     resp = requests.post(url,
                          json={'body': comment},
                          auth=(settings.PROXY_USER, GH_TOKEN))
-    logger.debug('GitHub response: {resp}: {content}'.format(
-        resp=resp,
-        content=pformat(resp.json())
-    ))
     if resp.status_code != 201:
+        logger.error('GitHub response: {resp}: {content}'.format(
+            resp=resp,
+            content=pformat(resp.json())
+        ))
         raise GitHubError(
             'Failed to post a comment to a PR with status code {0}!'.format(
                 resp.status_code)
@@ -194,11 +194,11 @@ def open_pull_request(repo: str, branch: str, addon_id: str,
     }
     resp = requests.post(url, json=payload, auth=(settings.PROXY_USER, GH_TOKEN))
     content = resp.json()
-    logger.debug('GitHub response: {resp}: {content}'.format(
-        resp=resp,
-        content=pformat(content)
-    ))
     if resp.status_code != 201:
+        logger.error('GitHub response: {resp}: {content}'.format(
+            resp=resp,
+            content=pformat(content)
+        ))
         raise GitHubError(
             'Failed to create a pull request with status code {0}!'.format(
                 resp.status_code)
