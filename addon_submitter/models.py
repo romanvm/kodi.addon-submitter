@@ -2,7 +2,6 @@
 # Author: Roman Miroshnychenko aka Roman V.M.
 # E-mail: roman1972@gmail.com
 
-from io import BytesIO
 from django.db import models
 from .zip_file import ZippedAddon
 
@@ -32,7 +31,7 @@ class PullRequest(models.Model):
     git_branch = models.CharField('Git branch', max_length=50,
                                   choices=BRANCHES,
                                   default='leia')
-    zipped_addon = models.BinaryField('Zipped addon')
+    zipped_addon = models.FileField('Zipped addon')
     send_notifications = models.BooleanField('Send notifications', default=True)
     timestamp = models.DateTimeField('Timestamp', auto_now_add=True)
 
@@ -40,11 +39,11 @@ class PullRequest(models.Model):
         """
         :return: :class:`ZippedAddon` instance for this pull request
         """
-        return ZippedAddon(BytesIO(self.zipped_addon))
+        return ZippedAddon(self.zipped_addon)
 
     def __str__(self) -> str:
         zipdaddon = self.get_zipped_addon()
-        return '[{0}] {1}'.format(zipdaddon.id, zipdaddon.version)
+        return '{0}-{1}'.format(zipdaddon.id, zipdaddon.version)
 
     class Meta:
         verbose_name = 'Pull Request'

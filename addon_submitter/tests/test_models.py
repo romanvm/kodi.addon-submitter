@@ -4,22 +4,35 @@
 
 import os
 from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.testcases import TestCase
 from ..models import PullRequest
 
 
 class PullRequestTestCase(TestCase):
+    def setUp(self):
+        self.pull_request = None
+
     def test_pull_request_model(self):
-        path = os.path.join(settings.BASE_DIR, 'test_data',
-                            'plugin.video.example-2.2.0.zip')
-        with open(path, 'rb') as fo:
-            PullRequest.objects.create(
-                author='John Doe',
-                author_email='jdoe@example.com',
-                addon_description='My cool addon',
-                git_repo='repo-scripts',
-                git_branch='krypton',
-                zipped_addon=fo.read()
-            )
-        pr = PullRequest.objects.all()[0]
-        self.assertEqual(str(pr), '[plugin.video.example] 2.2.0')
+        filename = 'plugin.video.example-2.2.0.zip'
+        path = os.path.join(settings.BASE_DIR, 'test_data', filename)
+        fo = open(path, 'rb')
+        zipped_addon = SimpleUploadedFile(filename, fo.read(),
+                                          'application/zip')
+        PullRequest.objects.create(
+            author='John Doe',
+            author_email='jdoe@example.com',
+            addon_description='My cool addon',
+            git_repo='repo-scripts',
+            git_branch='krypton',
+            zipped_addon=zipped_addon
+        )
+        self.pull_request = PullRequest.objects.all()[0]
+        self.assertEqual(str(self.pull_request), 'plugin.video.example-2.2.0')
+
+    def tearDown(self):
+        if self.pull_request is not None:
+            zip_path = self.pull_request.zipped_addon.path
+            if os.path.exists(zip_path):
+                self.pull_request.zipped_addon.close()
+                os.remove(zip_path)

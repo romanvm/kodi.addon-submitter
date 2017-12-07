@@ -145,3 +145,5 @@ venv.bak/
 *.sqlite3
 .idea/
 workdir/
+static/
+media/

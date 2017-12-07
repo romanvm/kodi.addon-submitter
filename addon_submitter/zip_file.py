@@ -5,14 +5,16 @@
 
 from xml.dom.minidom import parse
 from zipfile import ZipFile
-from typing import BinaryIO
+from typing import Union, BinaryIO
+from django.core.files import File
+from django.db.models import FileField
 
 __all__ = ['ZippedAddon']
 
 
 class ZippedAddon:
     """Represents a zipped addon"""
-    def __init__(self, fo: BinaryIO) -> None:
+    def __init__(self, fo: Union[BinaryIO, File, FileField]) -> None:
         """
         :param fo: file-like object with zipped addon
         :raises FileNotFoundError: if zip has no addon.xml file
