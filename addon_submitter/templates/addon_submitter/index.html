@@ -5,4 +5,18 @@
 {% block content %}
   <h1>Kodi Addon Submission</h1>
   <p>Here you can submit your addon to the Kodi official repository</p>
+  <form action="/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+      <span>{{ form.non_field_errors }}</span>
+    </div>
+    {% for field in form %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      <small>{{ field.errors }}</small>
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
 {% endblock content %}
