@@ -8,13 +8,13 @@
   <form action="/" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="form-group">
-      <span>{{ form.non_field_errors }}</span>
+      <span class="text-danger">{{ form.non_field_errors }}</span>
     </div>
     {% for field in form %}
     <div class="form-group">
       <label for="{{ field.id_for_label }}">{{ field.label }}</label>
       {{ field }}
-      <small>{{ field.errors }}</small>
+      <small class="text-danger">{{ field.errors }}</small>
     </div>
     {% endfor %}
     <div class="form-check">

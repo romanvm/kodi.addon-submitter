@@ -7,7 +7,7 @@ from .zip_file import ZippedAddon
 
 REPOSITORIES = (
     ('repo-scripts', 'Script addons'),
-    ('repo-plugin', 'Content plugins'),
+    ('repo-plugins', 'Content plugins'),
 )
 BRANCHES = (
     ('leia', '18 Leia'),

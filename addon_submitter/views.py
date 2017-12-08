@@ -10,7 +10,7 @@ from .forms import PullRequestForm
 
 def index(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
-        form = PullRequestForm(request.POST, request.FILES['zipped_addon'])
+        form = PullRequestForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('confirmation'))
