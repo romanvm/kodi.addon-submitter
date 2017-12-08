@@ -7,9 +7,13 @@ from io import BytesIO
 from django.conf import settings
 from django.shortcuts import reverse
 from django.test import TestCase
+from ..models import PullRequest
 
 
 class IndexViewTestCase(TestCase):
+    def tearDown(self):
+        pass
+
     def test_index_view_get(self):
         resp = self.client.get(reverse('index'))
         self.assertContains(resp, 'Submit Kodi Addon')
@@ -29,6 +33,10 @@ class IndexViewTestCase(TestCase):
             }
             resp = self.client.post(reverse('index'), data)
             self.assertRedirects(resp, reverse('confirmation'))
+            pr = PullRequest.objects.get(author='John Doe')
+            if os.path.exists(pr.zipped_addon.path):
+                pr.zipped_addon.close()
+                os.remove(pr.zipped_addon.path)
 
     def test_index_view_post_invalid_zip(self):
         data = {
