@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import sys
 from pprint import pformat
+from tempfile import TemporaryDirectory
 from typing import List
 from django.conf import settings
 from addon_submitter.zip_file import ZippedAddon
@@ -119,22 +120,17 @@ def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str) -> None:
     :param repo: addon repository name
     :param branch: git branch (Kodi version codename)
     """
-    workdir = settings.WORKDIR
-    try:
-        _create_addon_directory(workdir, zipaddon)
-        _prepare_pr_branch(repo, branch, workdir, zipaddon.id, zipaddon.version)
-    except Exception:
-        logging.exception('Error while preparing pull request!')
-        raise
-    finally:
-        os.chdir(workdir)
-        if sys.platform == 'win32':
-            os.system('attrib -h -s /s')
-            os.system('rd {0} /s /q'.format(os.path.join(workdir, repo)))
-            os.system('rd {0} /s /q'.format(os.path.join(workdir, zipaddon.id)))
-        else:
-            shutil.rmtree(os.path.join(workdir, repo), ignore_errors=True)
-            shutil.rmtree(os.path.join(workdir, zipaddon.id), ignore_errors=True)
+    with TemporaryDirectory() as workdir:
+        try:
+            _create_addon_directory(workdir, zipaddon)
+            _prepare_pr_branch(repo, branch, workdir, zipaddon.id, zipaddon.version)
+        except Exception:
+            logging.exception('Error while preparing pull request!')
+            raise
+        finally:
+            if sys.platform == 'win32':
+                os.chdir(workdir)
+                os.system('attrib -h -s /s')
 
 
 def post_comment(repo: str, pr_number: int, comment: str) -> None:
