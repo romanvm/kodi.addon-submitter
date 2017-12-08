@@ -11,7 +11,17 @@ try:
     # Allowed hosts are set as a comma-separated list, eg:
     # export ALLOWED_HOSTS="foo.com,bar.org,baz.net"
     ALLOWED_HOSTS += os.environ['ALLOWED_HOSTS'].split(',')
+    DATABASES = {
+        'default': {
+            'ENGINE': os.environ['DB_ENGINE'],
+            'NAME': os.environ['DB_NAME'],
+            'USER': os.environ['DB_USER'],
+            'PASSWORD': os.environ['DB_PASS'],
+            'HOST': 'localhost',
+            'PORT': '',
+        }
+    }
 except KeyError as ex:
     raise ImproperlyConfigured(
-        'Variable for production environments is not set!'
+        'Variable for the production environments is not set!'
     ) from ex
