@@ -21,6 +21,10 @@ try:
             'PORT': '',
         }
     }
+    PROXY_USER = os.environ['PROXY_USER']
+    USER_NAME = os.environ['USER_NAME']
+    USER_EMAIL = os.environ['USER_EMAIL']
+    UPSTREAM_USER = os.environ['UPSTREAM_USER']
 except KeyError as ex:
     raise ImproperlyConfigured(
         'Variable for the production environments is not set!'
