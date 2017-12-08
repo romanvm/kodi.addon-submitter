@@ -17,6 +17,12 @@
       <small>{{ field.errors }}</small>
     </div>
     {% endfor %}
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" required>
+        My code follows the <a href="http://kodi.wiki/view/Add-on_rules" target="_blank">add-on rules</a> and <a href="http://kodi.wiki/view/Official:Forum_rules#Piracy_Policy" target="_blank">piracy stance</a> of Kodi project.
+      </label>
+    </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 {% endblock content %}
