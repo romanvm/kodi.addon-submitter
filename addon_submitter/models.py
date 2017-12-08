@@ -22,8 +22,8 @@ class PullRequest(models.Model):
     Represents a pull request on GitHub for submission an addon
     to the Kodi official repo
     """
-    pr_no = models.IntegerField('Pull request number',
-                                blank=True, null=True)
+    pull_request_number = models.IntegerField('Pull request number',
+                                              blank=True, null=True)
     author = models.CharField('Addon author', max_length=200)
     author_email = models.EmailField('Author\'s email')
     github_username = models.CharField('GitHub username', max_length=200,
