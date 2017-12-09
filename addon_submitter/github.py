@@ -138,18 +138,18 @@ def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str) -> None:
                 os.system('attrib -h -s /s')
 
 
-def post_comment(repo: str, pr_number: int, comment: str) -> None:
+def post_comment(repo: str, pull_request_number: int, comment: str) -> None:
     """
     Post a comment to GitHub pull request
 
     :param repo: GitHub repository
-    :param pr_number: pull request number
+    :param pull_request_number: pull request number
     :param comment: comment text
     """
     url = GH_API + COMMENT_ENDPOINT.format(
         user=settings.UPSTREAM_USER,
         repo=repo,
-        number=pr_number
+        number=pull_request_number
     )
     resp = requests.post(url,
                          json={'body': comment},
@@ -165,8 +165,7 @@ def post_comment(repo: str, pr_number: int, comment: str) -> None:
         )
 
 
-def open_pull_request(repo: str,
-                      branch: str,
+def open_pull_request(repo: str, branch: str,
                       addon_id: str,
                       addon_version: str,
                       description: str) -> PullRequestResult:
