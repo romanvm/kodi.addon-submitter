@@ -24,7 +24,7 @@ class PullRequestForm(ModelForm):
         fo = cleaned_data.get('zipped_addon')
         try:
             ZippedAddon(fo)
-        except (BadZipFile, FileNotFoundError):
+        except (BadZipFile, FileNotFoundError, AttributeError):
             self.add_error('zipped_addon',
                            ValidationError(
                                'Bad zip archive or missing addon.xml!'

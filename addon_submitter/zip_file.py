@@ -18,6 +18,7 @@ class ZippedAddon:
         """
         :param fo: file-like object with zipped addon
         :raises FileNotFoundError: if zip has no addon.xml file
+        :raises AttributeError: if an invalid file-like object is supplied
         :raises zipfile.BadZipFile: if a file-like object does not contain
             a zip archive.
         """
