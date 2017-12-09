@@ -133,3 +133,5 @@ PROXY_USER = 'romanvm1972'
 USER_NAME = 'Roman Miroshnychenko'
 USER_EMAIL = 'roman1972@gmail.com'
 UPSTREAM_USER = 'romanvm'
+
+CELERY_BROKER_URL = 'amqp://localhost'

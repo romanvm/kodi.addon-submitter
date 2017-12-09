@@ -6,13 +6,16 @@ from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import reverse
 from .forms import PullRequestForm
+from .tasks import process_submitted_addon
 
 
 def index(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         form = PullRequestForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            pull_request = form.save()
+            # Add the pull request to Celery task queue
+            process_submitted_addon.delay(pull_request.pk)
             return HttpResponseRedirect(reverse('confirmation'))
     else:
         form = PullRequestForm()
