@@ -11,7 +11,7 @@ import subprocess
 import sys
 from pprint import pformat
 from tempfile import TemporaryDirectory
-from typing import List
+from typing import List, NamedTuple
 from django.conf import settings
 from addon_submitter.zip_file import ZippedAddon
 
@@ -34,6 +34,11 @@ logger.setLevel(level)
 
 class GitHubError(Exception):
     pass
+
+
+class PullRequestResult(NamedTuple):
+    number: int
+    html_url: str
 
 
 def _execute(args: List[str]) -> None:
@@ -160,8 +165,11 @@ def post_comment(repo: str, pr_number: int, comment: str) -> None:
         )
 
 
-def open_pull_request(repo: str, branch: str, addon_id: str,
-                      addon_version: str, description: str) -> int:
+def open_pull_request(repo: str,
+                      branch: str,
+                      addon_id: str,
+                      addon_version: str,
+                      description: str) -> PullRequestResult:
     """
     Open a pull request on GitHub
 
@@ -171,7 +179,7 @@ def open_pull_request(repo: str, branch: str, addon_id: str,
     :param addon_version: addon version
     :param description: PR description
     :raises GitHubError: when failed to create a PR
-    :return: Pull request #
+    :return: Pull request # and URL
     """
     url = GH_API + PR_ENPDOINT.format(
         user=settings.UPSTREAM_USER,
@@ -199,7 +207,7 @@ def open_pull_request(repo: str, branch: str, addon_id: str,
             'Failed to create a pull request with status code {0}!'.format(
                 resp.status_code)
         )
-    return content['number']
+    return PullRequestResult(content['number'], content['html_url'])
 
 
 def main():
@@ -213,9 +221,9 @@ def main():
                            'test_data', addon), 'rb') as fo:
         zipaddon = ZippedAddon(fo)
         prepare_repository(zipaddon, repo, branch)
-        pr_no = open_pull_request(repo, branch, zipaddon.id,
+        pr_result = open_pull_request(repo, branch, zipaddon.id,
                                   zipaddon.version, description)
-        post_comment(repo, pr_no, 'Ping @romanvm1972')
+        post_comment(repo, pr_result.number, 'Ping @romanvm1972')
 
 
 if __name__ == '__main__':
