@@ -4,17 +4,23 @@
 {% endblock title %}
 {% block content %}
   <h1>Kodi Addon Submission</h1>
-  <p>Here you can submit your addon to the Kodi official repository</p>
-  <form action="/" method="post" enctype="multipart/form-data">
+  <!-- <p>Here you can submit your addon to the Kodi official repository</p> -->
+  <p><strong>Note:</strong> This is a test site and no actual submission is perfomed.
+    Addon is submitted to a testing repository.</p>
+  <form action="{% url 'index' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    {% if form.non_field_errors %}
     <div class="form-group">
       <span class="text-danger">{{ form.non_field_errors }}</span>
     </div>
+    {% endif %}
     {% for field in form %}
     <div class="form-group">
-      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
       {{ field }}
+      {% if field.errors %}
       <small class="text-danger">{{ field.errors }}</small>
+      {% endif %}
     </div>
     {% endfor %}
     <div class="form-check">
