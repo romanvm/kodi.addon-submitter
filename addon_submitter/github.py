@@ -42,7 +42,6 @@ def _execute(args: List[str]) -> None:
     :raises RuntimeError: if command returns non-0 code
     """
     call_string = ' '.join(args)
-    logging.debug('Executing: ' + call_string)
     res = subprocess.call(args, shell=True)
     if res:
         raise RuntimeError('Call {call} returned error code {res}!'.format(

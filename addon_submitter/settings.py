@@ -15,7 +15,7 @@ import logging
 
 logging.basicConfig(
     format='%(asctime)s - %(module)s - %(levelname)s: %(message)s',
-    level=logging.DEBUG
+    level=logging.INFO
 )
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
