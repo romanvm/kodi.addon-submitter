@@ -28,6 +28,9 @@ class PullRequest(models.Model):
     author_email = models.EmailField('Author\'s email')
     addon_source_url = models.URLField('Addon source')
     addon_description = models.TextField('Addon description')
+    addon_id = models.CharField('Addon ID', max_length=200, db_index=True)
+    addon_version = models.CharField('Addon version', max_length=50,
+                                     db_index=True)
     git_repo = models.CharField('Git repository', max_length=50,
                                 choices=REPOSITORIES,
                                 default='repo-scripts')
@@ -43,6 +46,13 @@ class PullRequest(models.Model):
         :return: :class:`ZippedAddon` instance for this pull request
         """
         return ZippedAddon(self.zipped_addon)
+
+    def save(self, *args, **kwargs) -> None:
+        # Autopopulate addon_id and addon_version fields
+        zipped_addon = self.get_zipped_addon()
+        self.addon_id = zipped_addon.id
+        self.addon_version = zipped_addon.version
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         zipdaddon = self.get_zipped_addon()

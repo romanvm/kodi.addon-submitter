@@ -29,8 +29,10 @@ class PullRequestTestCase(TestCase):
             zipped_addon=zipped_addon
         )
         self.pull_request = PullRequest.objects.all()[0]
-        self.assertEqual(str(self.pull_request), 'plugin.video.example-2.2.0')
-        print('pull request model test passed')
+        self.assertEqual(self.pull_request.addon_id, 'plugin.video.example')
+        self.assertEqual(self.pull_request.addon_version, '2.2.0')
+        zipped_addon = self.pull_request.get_zipped_addon()
+        self.assertTrue(zipped_addon.is_folder)
 
     def tearDown(self):
         if self.pull_request is not None:
