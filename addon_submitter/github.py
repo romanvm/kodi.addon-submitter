@@ -24,14 +24,14 @@ PR_ENPDOINT = '/repos/{user}/{repo}/pulls'
 COMMENT_ENDPOINT = '/repos/{user}/{repo}/issues/{number}/comments'
 GH_TOKEN = os.environ['GH_TOKEN']
 
+PullRequestResult = NamedTuple(
+    'PullRequestResult',
+    [('number', int), ('html_url', str)]
+)
+
 
 class GitHubError(Exception):
     pass
-
-
-class PullRequestResult(NamedTuple):
-    number: int
-    html_url: str
 
 
 def _execute(args: List[str]) -> None:
