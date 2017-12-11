@@ -133,5 +133,6 @@ PROXY_USER = 'romanvm1972'
 USER_NAME = 'Roman Miroshnychenko'
 USER_EMAIL = 'roman1972@gmail.com'
 UPSTREAM_USER = 'romanvm'
+EMAIL_SUBJECT_PREFIX = '[Kodi addon submission] '
 
 CELERY_BROKER_URL = 'amqp://localhost'

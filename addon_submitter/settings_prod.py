@@ -25,6 +25,10 @@ try:
     USER_NAME = os.environ['USER_NAME']
     USER_EMAIL = os.environ['USER_EMAIL']
     UPSTREAM_USER = os.environ['UPSTREAM_USER']
+    EMAIL_HOST = os.environ['EMAIL_HOST']
+    EMAIL_PORT = os.environ['EMAIL_PORT']
+    EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+    EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 except KeyError as ex:
     raise ImproperlyConfigured(
         'Variable for the production environments is not set!'
