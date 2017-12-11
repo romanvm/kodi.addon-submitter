@@ -37,7 +37,7 @@ class PullRequestForm(ModelForm):
         model = PullRequest
         fields = ('author',
                   'author_email',
-                  'github_username',
+                  'addon_source_url',
                   'addon_description',
                   'git_repo',
                   'git_branch',

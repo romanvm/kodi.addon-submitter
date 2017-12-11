@@ -6,7 +6,7 @@ import os
 from io import BytesIO
 from django.conf import settings
 from django.shortcuts import reverse
-from django.test import TestCase
+from django.test import TestCase, mock
 from ..models import PullRequest
 
 
@@ -18,14 +18,15 @@ class IndexViewTestCase(TestCase):
         resp = self.client.get(reverse('index'))
         self.assertContains(resp, 'Submit Kodi Addon')
 
-    def test_index_view_post_valid(self):
+    @mock.patch('addon_submitter.views.process_submitted_addon')
+    def test_index_view_post_valid(self, *args):
         zip_path = os.path.join(settings.BASE_DIR, 'test_data',
                                 'plugin.video.example-2.2.0.zip')
         with open(zip_path, 'rb') as fo:
             data = {
                 'author': 'John Doe',
                 'author_email': 'jdoe@example.com',
-                'github_username': 'jdoe',
+                'addon_source_url': 'https://github.com/jdoe/foo',
                 'addon_description': 'My cool addon',
                 'git_repo': 'repo-plugins',
                 'git_branch': 'leia',
@@ -42,7 +43,7 @@ class IndexViewTestCase(TestCase):
         data = {
             'author': 'John Doe',
             'author_email': 'jdoe@example.com',
-            'github_username': 'jdoe',
+            'addon_source_url': 'https://github.com/jdoe/foo',
             'addon_description': 'My cool addon',
             'git_repo': 'repo-plugins',
             'git_branch': 'leia',

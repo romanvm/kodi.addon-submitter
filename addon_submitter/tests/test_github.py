@@ -25,11 +25,17 @@ class GitHubTestCase(TestCase):
     def test_git_hub_api(self, mock_requests):
         mock_resp = mock.MagicMock()
         mock_resp.status_code = 201
-        mock_resp.json.return_value = {'number': 1}
+        mock_resp.json.return_value = {
+            'number': 1,
+            'html_url': 'https://github.com/jdoe/foo/pulls/1'}
         mock_requests.post.return_value = mock_resp
-        assert open_pull_request('repo-plugins',
+        self.assertEqual(open_pull_request('repo-plugins',
                                  'krypton',
                                  'plugin.video.foo',
                                  '0.0.1',
-                                 'Cool video plugin') == 1
+                                 'Cool video plugin'),
+                         PullRequestResult(
+                             1,
+                             'https://github.com/jdoe/foo/pulls/1'
+                         ))
         post_comment('repo-plugins', 1, 'Hello!')

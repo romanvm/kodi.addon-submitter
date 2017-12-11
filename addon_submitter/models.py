@@ -26,8 +26,7 @@ class PullRequest(models.Model):
                                               blank=True, null=True)
     author = models.CharField('Addon author', max_length=200)
     author_email = models.EmailField('Author\'s email')
-    github_username = models.CharField('GitHub username', max_length=200,
-                                       blank=True)
+    addon_source_url = models.URLField('Addon source')
     addon_description = models.TextField('Addon description')
     git_repo = models.CharField('Git repository', max_length=50,
                                 choices=REPOSITORIES,

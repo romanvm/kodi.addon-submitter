@@ -23,12 +23,14 @@ class PullRequestTestCase(TestCase):
             author='John Doe',
             author_email='jdoe@example.com',
             addon_description='My cool addon',
+            addon_source_url='https://github.com/foo/bar',
             git_repo='repo-scripts',
             git_branch='krypton',
             zipped_addon=zipped_addon
         )
         self.pull_request = PullRequest.objects.all()[0]
         self.assertEqual(str(self.pull_request), 'plugin.video.example-2.2.0')
+        print('pull request model test passed')
 
     def tearDown(self):
         if self.pull_request is not None:

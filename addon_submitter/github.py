@@ -16,7 +16,7 @@ from django.conf import settings
 from addon_submitter.zip_file import ZippedAddon
 
 __all__ = ['prepare_repository', 'open_pull_request',
-           'post_comment', 'GitHubError']
+           'post_comment', 'GitHubError', 'PullRequestResult']
 
 REPO_URL_MASK = 'https://{gh_token}@github.com/{user}/{repo}.git'
 GH_API = 'https://api.github.com'
