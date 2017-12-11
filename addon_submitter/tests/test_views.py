@@ -11,9 +11,6 @@ from ..models import PullRequest
 
 
 class IndexViewTestCase(TestCase):
-    def tearDown(self):
-        pass
-
     def test_index_view_get(self):
         resp = self.client.get(reverse('index'))
         self.assertContains(resp, 'Submit Kodi Addon')
@@ -34,10 +31,19 @@ class IndexViewTestCase(TestCase):
             }
             resp = self.client.post(reverse('index'), data)
             self.assertRedirects(resp, reverse('confirmation'))
-            pr = PullRequest.objects.get(author='John Doe')
-            if os.path.exists(pr.zipped_addon.path):
-                pr.zipped_addon.close()
-                os.remove(pr.zipped_addon.path)
+            pull_request1 = PullRequest.objects.get(
+                addon_id = 'plugin.video.example',
+                addon_version = '2.2.0'
+            )
+            self.client.post(reverse('index'), data)
+            pull_request2 = PullRequest.objects.get(
+                addon_id='plugin.video.example',
+                addon_version='2.2.0'
+            )
+            self.assertEqual(pull_request2.pk, pull_request1.pk)
+            if os.path.exists(pull_request1.zipped_addon.path):
+                pull_request1.zipped_addon.close()
+                os.remove(pull_request1.zipped_addon.path)
 
     def test_index_view_post_invalid_zip(self):
         data = {
