@@ -40,7 +40,7 @@ def _execute(args: List[str]) -> None:
     :param args: a command with arguments
     :raises subprocess.CalledProcessError: if command returns non-0 code
     """
-    res = subprocess.run(args, shell=True,
+    res = subprocess.run(args,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE)
     logging.info('Subprocess run result: {0}'.format(res))
@@ -106,28 +106,28 @@ def _prepare_pr_branch(repo: str, branch: str, workdir: str,
     _execute(['git', 'push', '-f', 'origin', addon_id])
 
 
-def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str) -> None:
+def prepare_repository(zipped_addon: ZippedAddon,
+                       repo: str, branch: str) -> None:
     """
     Prepare the proxy repository for submitting a pull request
 
-    :param zipaddon: zipped addon
+    :param zipped_addon: zipped addon
     :param repo: addon repository name
     :param branch: git branch (Kodi version codename)
     """
     os.chdir(settings.WORKDIR)
-    _execute(['mkdir', '"{0}"'.format(zipaddon.md5)])
-    workdir = os.path.join(settings.WORKDIR, zipaddon.md5)
+    _execute(['mkdir', zipped_addon.md5])
+    workdir = os.path.join(settings.WORKDIR, zipped_addon.md5)
     logging.info('Workdir: {0}'.format(workdir))
     try:
-        _create_addon_directory(workdir, zipaddon)
-        _prepare_pr_branch(repo, branch, workdir, zipaddon.id, zipaddon.version)
+        _create_addon_directory(workdir, zipped_addon)
+        _prepare_pr_branch(repo, branch, workdir,
+                           zipped_addon.id,
+                           zipped_addon.version)
     except Exception:
         logging.exception('Error while preparing pull request!')
         raise
     finally:
-        if sys.platform == 'win32':
-            os.chdir(workdir)
-            os.system('attrib -h -s /s')
         shutil.rmtree(workdir)
 
 
