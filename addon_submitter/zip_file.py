@@ -3,6 +3,7 @@
 # E-mail: roman1972@gmail.com
 """Module for working with zipped addons"""
 
+from hashlib import md5
 from xml.dom.minidom import parse
 from zipfile import ZipFile
 from typing import Union, BinaryIO
@@ -22,6 +23,8 @@ class ZippedAddon:
         :raises zipfile.BadZipFile: if a file-like object does not contain
             a zip archive.
         """
+        self._md5 = md5(fo.read()).hexdigest()
+        fo.seek(0)
         self._zipfile = ZipFile(fo)
         self._id = None
         self._version = None
@@ -64,6 +67,13 @@ class ZippedAddon:
         :return: if addon is zipped in a folder
         """
         return self._is_folder
+
+    @property
+    def md5(self) -> str:
+        """
+        :return: MD5 hexdigest of an archive file
+        """
+        return self._md5
 
     def extract(self, path: str = None) -> None:
         """
