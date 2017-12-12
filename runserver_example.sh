@@ -27,5 +27,5 @@ export GH_TOKEN=""
 
 SOCKET=$HOME/kodi.addon-submitter/addon-submitter.sock
 
-cd $HOME/kodi.addon_submitter
+cd $HOME/kodi.addon-submitter
 pipenv run gunicorn --workers 3 --bind $SOCKET addon_submitter.wsgi:application
