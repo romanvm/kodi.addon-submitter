@@ -24,6 +24,7 @@ class PullRequest(models.Model):
     """
     pull_request_number = models.IntegerField('Pull request number',
                                               blank=True, null=True)
+    pull_request_url = models.URLField('Pull request URL', blank=True)
     author = models.CharField('Addon author', max_length=200)
     author_email = models.EmailField('Author\'s email')
     addon_source_url = models.URLField('Addon source')
@@ -48,10 +49,11 @@ class PullRequest(models.Model):
         return ZippedAddon(self.zipped_addon)
 
     def save(self, *args, **kwargs) -> None:
-        # Autopopulate addon_id and addon_version fields
-        zipped_addon = self.get_zipped_addon()
-        self.addon_id = zipped_addon.id
-        self.addon_version = zipped_addon.version
+        if not self.addon_id:
+            # Autopopulate addon_id and addon_version fields
+            zipped_addon = self.get_zipped_addon()
+            self.addon_id = zipped_addon.id
+            self.addon_version = zipped_addon.version
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:

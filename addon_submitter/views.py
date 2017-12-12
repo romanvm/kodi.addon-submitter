@@ -22,10 +22,12 @@ def index(request: HttpRequest) -> HttpResponse:
             )
             if queryset.exists():
                 pull_request = queryset[0]
+                new_submission = False
             else:
                 pull_request = form.save()
+                new_submission = True
             # Add the pull request to Celery task queue
-            process_submitted_addon.delay(pull_request.pk)
+            process_submitted_addon.delay(pull_request.pk, new_submission)
             return HttpResponseRedirect(reverse('confirmation'))
     else:
         form = PullRequestForm()
