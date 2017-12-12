@@ -4,6 +4,6 @@
 
 SOCKET="unix:$HOME/kodi.addon-submitter/addon-submitter.sock"
 
-cd $HOME/kodi.addon-submitter
+cd ~/kodi.addon-submitter
 source settings.sh
 pipenv run gunicorn --workers 3 --bind $SOCKET addon_submitter.wsgi:application
