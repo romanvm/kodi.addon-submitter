@@ -119,7 +119,7 @@ def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str) -> None:
     """
     workdir = os.path.join(settings.WORKDIR, zipaddon.md5)
     logging.info('Workdir: {0}'.format(workdir))
-    _execute(['mkdir', workdir])
+    _execute(['mkdir', '-p', workdir])
     try:
         _create_addon_directory(workdir, zipaddon)
         _prepare_pr_branch(repo, branch, workdir, zipaddon.id, zipaddon.version)
