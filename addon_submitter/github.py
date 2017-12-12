@@ -115,7 +115,7 @@ def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str) -> None:
     :param branch: git branch (Kodi version codename)
     """
     os.chdir(settings.WORKDIR)
-    _execute(['mkdir', zipaddon.md5])
+    _execute(['mkdir', '"{0}"'.format(zipaddon.md5)])
     workdir = os.path.join(settings.WORKDIR, zipaddon.md5)
     logging.info('Workdir: {0}'.format(workdir))
     try:
