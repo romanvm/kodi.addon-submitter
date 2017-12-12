@@ -22,6 +22,7 @@ export EMAIL_HOST="smtp.ukr.net"
 export EMAIL_PORT="465"
 export EMAIL_HOST_USER=""
 export EMAIL_HOST_PASSWORD=""
+export GH_TOKEN=""
 #=== End configuration options ===
 
 SOCKET=$HOME/addon_submitter/addon_submitter.sock

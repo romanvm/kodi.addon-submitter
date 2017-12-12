@@ -29,6 +29,7 @@ try:
     EMAIL_PORT = os.environ['EMAIL_PORT']
     EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
     EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+    GH_TOKEN = os.environ['GH_TOKEN']
 except KeyError as ex:
     raise ImproperlyConfigured(
         'Variable for the production environments is not set!'

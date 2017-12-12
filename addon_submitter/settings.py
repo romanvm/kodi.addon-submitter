@@ -137,5 +137,6 @@ USER_NAME = 'Roman Miroshnychenko'
 USER_EMAIL = 'roman1972@gmail.com'
 UPSTREAM_USER = 'romanvm'
 EMAIL_SUBJECT_PREFIX = '[Kodi addon submission] '
+GH_TOKEN = 'github secret token'
 
 CELERY_BROKER_URL = 'amqp://localhost'

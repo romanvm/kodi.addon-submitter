@@ -22,7 +22,7 @@ REPO_URL_MASK = 'https://{gh_token}@github.com/{user}/{repo}.git'
 GH_API = 'https://api.github.com'
 PR_ENPDOINT = '/repos/{user}/{repo}/pulls'
 COMMENT_ENDPOINT = '/repos/{user}/{repo}/issues/{number}/comments'
-GH_TOKEN = os.environ['GH_TOKEN']
+GH_TOKEN = settings.GH_TOKEN
 
 PullRequestResult = NamedTuple(
     'PullRequestResult',
