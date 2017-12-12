@@ -40,9 +40,9 @@ def _execute(args: List[str]) -> None:
     :param args: a command with arguments
     :raises RuntimeError: if command returns non-0 code
     """
+    res = subprocess.call(args, shell=True)
     call_string = ' '.join(args)
     logging.info(call_string)
-    res = subprocess.call(args, shell=True)
     if res:
         raise RuntimeError('Call {call} returned error code {res}!'.format(
             call=call_string,
