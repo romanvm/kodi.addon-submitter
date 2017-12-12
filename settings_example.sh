@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-# This is an example of a script that runs addon_submitter application
-# in a production environment.
+# This is an example of production settings for addon_submitter application.
 # Update the options below with your actual values and save the script
-# as runserver.sh.
+# as settings.sh.
 # All option values must be provided!
 
 #===== Configuration options =====
@@ -24,8 +23,3 @@ export EMAIL_HOST_USER=""
 export EMAIL_HOST_PASSWORD=""
 export GH_TOKEN=""
 #=== End configuration options ===
-
-SOCKET=$HOME/kodi.addon-submitter/addon-submitter.sock
-
-cd $HOME/kodi.addon-submitter
-pipenv run gunicorn --workers 3 --bind $SOCKET addon_submitter.wsgi:application
