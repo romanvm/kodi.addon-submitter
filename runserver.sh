@@ -2,7 +2,7 @@
 # This script is used to run addon_submitter application
 # in a production environment.
 
-SOCKET="unix:$HOME/kodi.addon-submitter/addon-submitter.sock"
+SOCKET="unix:~/kodi.addon-submitter/addon-submitter.sock"
 
 cd ~/kodi.addon-submitter
 source settings.sh
