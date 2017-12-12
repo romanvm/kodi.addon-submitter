@@ -17,8 +17,9 @@ def process_submitted_addon(pk: int, new_submission: bool) -> None:
     :param pk: primary key for PullRequest model instance
     :param new_submission: ``True`` for newly submitted addon
     """
+    pull_request = PullRequest.objects.get(pk=pk)
+    logging.debug('Processing addon {0}'.format(pull_request))
     try:
-        pull_request = PullRequest.objects.get(pk=pk)
         zipped_addon = pull_request.get_zipped_addon()
         prepare_repository(
             zipped_addon,
@@ -33,6 +34,7 @@ def process_submitted_addon(pk: int, new_submission: bool) -> None:
                 zipped_addon.version,
                 pull_request.addon_description
             )
+            logging.debug('Pull request created: {0}'.format(result))
             pull_request.pull_request_number = result.number
             pull_request.pull_request_url = result.html_url
             pull_request.save()
@@ -46,5 +48,8 @@ def process_submitted_addon(pk: int, new_submission: bool) -> None:
             zipped_addon.version,
             html_url
         )
+        logging.debug('Confirmation mail for {0} sent.'.format(pull_request))
     except Exception:
-        logging.exception('Error while processing a submitted addon!')
+        logging.exception(
+            'Error while processing a submitted addon {0}!'.format(pull_request)
+        )

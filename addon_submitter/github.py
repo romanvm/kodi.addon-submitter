@@ -10,7 +10,6 @@ import shutil
 import subprocess
 import sys
 from pprint import pformat
-from tempfile import TemporaryDirectory
 from typing import List, NamedTuple
 from django.conf import settings
 from addon_submitter.zip_file import ZippedAddon
@@ -42,6 +41,7 @@ def _execute(args: List[str]) -> None:
     :raises RuntimeError: if command returns non-0 code
     """
     call_string = ' '.join(args)
+    logging.debug(call_string)
     res = subprocess.call(args, shell=True)
     if res:
         raise RuntimeError('Call {call} returned error code {res}!'.format(
