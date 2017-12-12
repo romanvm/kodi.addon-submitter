@@ -25,7 +25,7 @@ export EMAIL_HOST_PASSWORD=""
 export GH_TOKEN=""
 #=== End configuration options ===
 
-SOCKET=$HOME/kodi.addon-submitter/addon_submitter.sock
+SOCKET=$HOME/kodi.addon-submitter/addon-submitter.sock
 
 cd $HOME/kodi.addon_submitter
 pipenv run gunicorn --workers 3 --bind $SOCKET addon_submitter.wsgi:application
