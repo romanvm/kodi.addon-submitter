@@ -38,16 +38,13 @@ def _execute(args: List[str]) -> None:
     Execute a console command
 
     :param args: a command with arguments
-    :raises RuntimeError: if command returns non-0 code
+    :raises subprocess.CalledProcessError: if command returns non-0 code
     """
-    res = subprocess.call(args, shell=True)
-    call_string = ' '.join(args)
-    logging.info(call_string)
-    if res:
-        raise RuntimeError('Call {call} returned error code {res}!'.format(
-            call=call_string,
-            res=res
-        ))
+    res = subprocess.run(args, shell=True,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+    logging.info('Subprocess run result: {0}'.format(res))
+    res.check_returncode()
 
 
 def _create_addon_directory(workdir: str, zipaddon: ZippedAddon) -> None:
