@@ -31,6 +31,7 @@ try:
     EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
     EMAIL_USE_SSL=bool(os.environ.get('EMAIL_USE_SSL'))
     EMAIL_USE_TLS = bool(os.environ.get('EMAIL_USE_TLS'))
+    EMAIL_FROM_ADDRESS = os.environ['EMAIL_FROM_ADDRESS']
     GH_TOKEN = os.environ['GH_TOKEN']
 except KeyError as ex:
     raise ImproperlyConfigured(

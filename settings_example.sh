@@ -22,5 +22,6 @@ export EMAIL_PORT="465"
 export EMAIL_USE_SSL="true"
 export EMAIL_HOST_USER=""
 export EMAIL_HOST_PASSWORD=""
+export EMAIL_FROM_ADDRESS="romanvm1972@ukr.net"
 export GH_TOKEN=""
 #=== End configuration options ===

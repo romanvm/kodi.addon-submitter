@@ -6,6 +6,7 @@ from smtplib import SMTPException
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.conf import settings
 
 
 def send_success_message(recipient_name: str,
@@ -36,7 +37,7 @@ def send_success_message(recipient_name: str,
         send_mail(
             subject='Your addon has been accepted',
             message=strip_tags(html_mesage),
-            from_email='noreply@example.com',
+            from_email=settings.EMAIL_FROM_ADDRESS,
             recipient_list=[recipient_email],
             html_message=html_mesage
         )
