@@ -37,11 +37,11 @@ def _execute(args: List[str]) -> None:
     """
     Execute a console command
 
-    :param args: command with arguments
+    :param args: a command with arguments
     :raises RuntimeError: if command returns non-0 code
     """
     call_string = ' '.join(args)
-    logging.debug(call_string)
+    logging.info(call_string)
     res = subprocess.call(args, shell=True)
     if res:
         raise RuntimeError('Call {call} returned error code {res}!'.format(
@@ -118,6 +118,7 @@ def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str) -> None:
     :param branch: git branch (Kodi version codename)
     """
     workdir = os.path.join(settings.WORKDIR, zipaddon.md5)
+    logging.info('Workdir: {0}'.format(workdir))
     _execute(['mkdir', workdir])
     try:
         _create_addon_directory(workdir, zipaddon)
