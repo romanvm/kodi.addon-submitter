@@ -147,4 +147,4 @@ venv.bak/
 workdir/
 static/
 media/
-runserver.sh
+settings.sh
