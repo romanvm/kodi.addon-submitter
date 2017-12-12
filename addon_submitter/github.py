@@ -117,9 +117,10 @@ def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str) -> None:
     :param repo: addon repository name
     :param branch: git branch (Kodi version codename)
     """
+    os.chdir(settings.WORKDIR)
+    _execute(['mkdir', zipaddon.md5])
     workdir = os.path.join(settings.WORKDIR, zipaddon.md5)
     logging.info('Workdir: {0}'.format(workdir))
-    _execute(['mkdir', '-p', workdir])
     try:
         _create_addon_directory(workdir, zipaddon)
         _prepare_pr_branch(repo, branch, workdir, zipaddon.id, zipaddon.version)
