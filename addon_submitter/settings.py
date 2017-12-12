@@ -132,6 +132,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Project-specific settings
 WORKDIR = os.path.join(BASE_DIR, 'workdir')
+if not os.path.exists(WORKDIR):
+    os.mkdir(WORKDIR)
 PROXY_USER = 'romanvm1972'
 USER_NAME = 'Roman Miroshnychenko'
 USER_EMAIL = 'roman1972@gmail.com'

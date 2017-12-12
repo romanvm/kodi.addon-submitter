@@ -117,17 +117,18 @@ def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str) -> None:
     :param repo: addon repository name
     :param branch: git branch (Kodi version codename)
     """
-    with TemporaryDirectory() as workdir:
-        try:
-            _create_addon_directory(workdir, zipaddon)
-            _prepare_pr_branch(repo, branch, workdir, zipaddon.id, zipaddon.version)
-        except Exception:
-            logging.exception('Error while preparing pull request!')
-            raise
-        finally:
-            if sys.platform == 'win32':
-                os.chdir(workdir)
-                os.system('attrib -h -s /s')
+    workdir = os.path.join(settings.WORKDIR, zipaddon.md5)
+    try:
+        _create_addon_directory(workdir, zipaddon)
+        _prepare_pr_branch(repo, branch, workdir, zipaddon.id, zipaddon.version)
+    except Exception:
+        logging.exception('Error while preparing pull request!')
+        raise
+    finally:
+        if sys.platform == 'win32':
+            os.chdir(workdir)
+            os.system('attrib -h -s /s')
+        shutil.rmtree(workdir)
 
 
 def post_comment(repo: str, pull_request_number: int, comment: str) -> None:
