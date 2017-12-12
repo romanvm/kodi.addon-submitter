@@ -118,7 +118,7 @@ def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str) -> None:
     :param branch: git branch (Kodi version codename)
     """
     workdir = os.path.join(settings.WORKDIR, zipaddon.md5)
-    os.mkdir(workdir)
+    _execute(['mkdir', workdir])
     try:
         _create_addon_directory(workdir, zipaddon)
         _prepare_pr_branch(repo, branch, workdir, zipaddon.id, zipaddon.version)
@@ -130,33 +130,6 @@ def prepare_repository(zipaddon: ZippedAddon, repo: str, branch: str) -> None:
             os.chdir(workdir)
             os.system('attrib -h -s /s')
         shutil.rmtree(workdir)
-
-
-def post_comment(repo: str, pull_request_number: int, comment: str) -> None:
-    """
-    Post a comment to GitHub pull request
-
-    :param repo: GitHub repository
-    :param pull_request_number: pull request number
-    :param comment: comment text
-    """
-    url = GH_API + COMMENT_ENDPOINT.format(
-        user=settings.UPSTREAM_USER,
-        repo=repo,
-        number=pull_request_number
-    )
-    resp = requests.post(url,
-                         json={'body': comment},
-                         auth=(settings.PROXY_USER, GH_TOKEN))
-    if resp.status_code != 201:
-        logging.error('GitHub response: {resp}: {content}'.format(
-            resp=resp,
-            content=pformat(resp.json())
-        ))
-        raise GitHubError(
-            'Failed to post a comment to a PR with status code {0}!'.format(
-                resp.status_code)
-        )
 
 
 def open_pull_request(repo: str, branch: str,
@@ -201,6 +174,33 @@ def open_pull_request(repo: str, branch: str,
                 resp.status_code)
         )
     return PullRequestResult(content['number'], content['html_url'])
+
+
+def post_comment(repo: str, pull_request_number: int, comment: str) -> None:
+    """
+    Post a comment to GitHub pull request
+
+    :param repo: GitHub repository
+    :param pull_request_number: pull request number
+    :param comment: comment text
+    """
+    url = GH_API + COMMENT_ENDPOINT.format(
+        user=settings.UPSTREAM_USER,
+        repo=repo,
+        number=pull_request_number
+    )
+    resp = requests.post(url,
+                         json={'body': comment},
+                         auth=(settings.PROXY_USER, GH_TOKEN))
+    if resp.status_code != 201:
+        logging.error('GitHub response: {resp}: {content}'.format(
+            resp=resp,
+            content=pformat(resp.json())
+        ))
+        raise GitHubError(
+            'Failed to post a comment to a PR with status code {0}!'.format(
+                resp.status_code)
+        )
 
 
 def main():
