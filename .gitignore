@@ -149,3 +149,4 @@ static/
 media/
 settings.sh
 runserver.sh
+celery.sh
