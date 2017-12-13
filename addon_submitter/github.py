@@ -11,7 +11,7 @@ import subprocess
 from pprint import pformat
 from typing import List, NamedTuple
 from django.conf import settings
-from addon_submitter.zip_file import ZippedAddon
+from .zip_file import ZippedAddon
 
 __all__ = ['prepare_repository', 'open_pull_request',
            'post_comment', 'GitHubError', 'PullRequestResult']
@@ -199,23 +199,3 @@ def post_comment(repo: str, pull_request_number: int, comment: str) -> None:
             'Failed to post a comment to a PR with status code {0}!'.format(
                 resp.status_code)
         )
-
-
-def main():
-    import sys
-    sys.path.append(settings.BASE_DIR)
-    repo = 'repo-scripts'
-    branch = 'krypton'
-    addon = 'plugin.video.example-2.2.0.zip'
-    description = 'Please accept this cool new addon to the repository'
-    with open(os.path.join(settings.BASE_DIR,
-                           'test_data', addon), 'rb') as fo:
-        zipaddon = ZippedAddon(fo)
-        prepare_repository(zipaddon, repo, branch)
-        pr_result = open_pull_request(repo, branch, zipaddon.id,
-                                  zipaddon.version, description)
-        post_comment(repo, pr_result.number, 'Ping @romanvm1972')
-
-
-if __name__ == '__main__':
-    main()
