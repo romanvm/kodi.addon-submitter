@@ -42,7 +42,7 @@ def _execute(args: List[str]) -> None:
     res = subprocess.run(args,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE)
-    logging.info('Subprocess run result: {0}'.format(res))
+    logging.debug('Subprocess run result: {0}'.format(res))
     res.check_returncode()
 
 
@@ -117,7 +117,7 @@ def prepare_repository(zipped_addon: ZippedAddon,
     os.chdir(settings.WORKDIR)
     _execute(['mkdir', zipped_addon.md5])
     workdir = os.path.join(settings.WORKDIR, zipped_addon.md5)
-    logging.info('Workdir: {0}'.format(workdir))
+    logging.debug('Workdir: {0}'.format(workdir))
     try:
         _create_addon_directory(workdir, zipped_addon)
         _prepare_pr_branch(repo, branch, workdir,
