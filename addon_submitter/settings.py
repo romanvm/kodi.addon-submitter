@@ -18,17 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Setup logging
 LOG_FORMAT = '%(asctime)s: %(levelname)s - %(module)s: %(message)s'
-logging.basicConfig(
-    format=LOG_FORMAT,
-    level=logging.DEBUG
-)
-_formatter = logging.Formatter(LOG_FORMAT)
-_file_handler = logging.FileHandler(
-    os.path.join(BASE_DIR, 'addon-submitter.log')
-)
-_file_handler.setFormatter(_formatter)
-logging.getLogger().addHandler(_file_handler)
-
+logging.basicConfig(format=LOG_FORMAT, level=logging.NOTSET)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
