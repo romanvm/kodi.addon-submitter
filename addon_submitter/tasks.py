@@ -53,4 +53,3 @@ def process_submitted_addon(pk: int, new_submission: bool) -> None:
         logging.exception(
             'Error while processing a submitted addon {0}!'.format(pull_request)
         )
-        pull_request.delete()
