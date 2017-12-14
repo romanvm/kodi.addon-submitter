@@ -21,6 +21,7 @@ class TasksTestCase(TestCase):
 
     @mock.patch('addon_submitter.tasks.send_success_message')
     @mock.patch('addon_submitter.tasks.prepare_repository')
+    @mock.patch('addon_submitter.tasks.post_comment')
     @mock.patch('addon_submitter.tasks.open_pull_request')
     def test_process_submitted_addon(self, m_open_pr, *args):
         m_open_pr.return_value = PullRequestResult(
@@ -42,7 +43,8 @@ class TasksTestCase(TestCase):
             git_branch='krypton',
             zipped_addon=zipped_addon
         )
-        process_submitted_addon(self.pull_request.pk, True)
+        process_submitted_addon(self.pull_request.pk)
+        m_open_pr.assert_called()
 
     # def tearDown(self):
     #     if self.pull_request is not None:

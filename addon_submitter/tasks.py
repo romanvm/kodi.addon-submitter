@@ -8,12 +8,12 @@ Asynchronous tasks executed by Celery
 import logging
 from celery import shared_task
 from .models import PullRequest
-from .github import prepare_repository, open_pull_request
+from .github import prepare_repository, open_pull_request, post_comment
 from .email import send_success_message
 
 
 @shared_task
-def process_submitted_addon(pk: int, new_submission: bool) -> None:
+def process_submitted_addon(pk: int) -> None:
     """
     Process submitted addon asynchronously with Celery
 
@@ -29,7 +29,7 @@ def process_submitted_addon(pk: int, new_submission: bool) -> None:
             pull_request.git_repo,
             pull_request.git_branch
         )
-        if new_submission:
+        if pull_request.pull_request_number is None:
             result = open_pull_request(
                 pull_request.git_repo,
                 pull_request.git_branch,
@@ -46,6 +46,10 @@ def process_submitted_addon(pk: int, new_submission: bool) -> None:
             html_url = result.html_url
         else:
             html_url = pull_request.pull_request_url
+            post_comment(pull_request.git_repo,
+                         pull_request.pull_request_number,
+                         'Addon updated'
+                         )
         send_success_message(
             pull_request.author,
             pull_request.author_email,
