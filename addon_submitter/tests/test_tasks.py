@@ -44,7 +44,7 @@ class TasksTestCase(TestCase):
             zipped_addon=zipped_addon
         )
         process_submitted_addon(self.pull_request.pk)
-        m_open_pr.assert_called()
+        self.assertEqual(m_open_pr.call_count, 1)
 
     # def tearDown(self):
     #     if self.pull_request is not None:
