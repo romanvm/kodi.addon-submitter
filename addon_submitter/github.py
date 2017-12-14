@@ -11,6 +11,7 @@ import subprocess
 from pprint import pformat
 from typing import List, NamedTuple
 from django.conf import settings
+from django.template.loader import render_to_string
 from .zip_file import ZippedAddon
 
 __all__ = ['prepare_repository', 'open_pull_request',
@@ -133,6 +134,8 @@ def prepare_repository(zipped_addon: ZippedAddon,
 def open_pull_request(repo: str, branch: str,
                       addon_id: str,
                       addon_version: str,
+                      addon_author: str,
+                      source_url: str,
                       description: str) -> PullRequestResult:
     """
     Open a pull request on GitHub
@@ -141,6 +144,8 @@ def open_pull_request(repo: str, branch: str,
     :param branch: Git branch (Kodi version codename)
     :param addon_id: addon ID
     :param addon_version: addon version
+    :param addon_author: addon author
+    :param source_url: source code URL
     :param description: PR description
     :raises GitHubError: when failed to create a PR
     :return: Pull request # and URL
@@ -158,9 +163,13 @@ def open_pull_request(repo: str, branch: str,
             branch=addon_id
         ),
         'base': branch,
-        'body': description
+        'body': render_to_string('addon_submitter/pr-comment.md',
+                                 {'author': addon_author,
+                                  'source_url': source_url,
+                                  'description': description})
     }
-    resp = requests.post(url, json=payload, auth=(settings.PROXY_USER, GH_TOKEN))
+    resp = requests.post(url, json=payload,
+                         auth=(settings.PROXY_USER, GH_TOKEN))
     content = resp.json()
     if resp.status_code != 201:
         logging.error('GitHub response: {resp}: {content}'.format(

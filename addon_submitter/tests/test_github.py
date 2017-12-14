@@ -33,6 +33,8 @@ class GitHubTestCase(TestCase):
                                  'krypton',
                                  'plugin.video.foo',
                                  '0.0.1',
+                                 'John Doe',
+                                 'https://github.com/jdoe/foo',
                                  'Cool video plugin'),
                          PullRequestResult(
                              1,
