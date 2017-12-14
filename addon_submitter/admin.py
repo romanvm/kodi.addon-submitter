@@ -8,7 +8,7 @@ from .models import PullRequest
 
 @admin.register(PullRequest)
 class PullRequestAdmin(admin.ModelAdmin):
-    list_display = ('author', 'author_email', 'git_repo', 'git_branch',
-                    'timestamp')
-    search_fields = ('author', 'author_email')
+    list_display = ('addon_id', 'addon_version', 'author', 'author_email',
+                    'git_repo', 'git_branch', 'timestamp')
+    search_fields = ('addon_id', 'author', 'author_email')
     ordering = ('-pk',)
