@@ -35,7 +35,7 @@ def process_submitted_addon(pk: int, new_submission: bool) -> None:
                 pull_request.git_branch,
                 zipped_addon.id,
                 zipped_addon.version,
-                pull_request.addon_author,
+                pull_request.author,
                 pull_request.addon_source_url,
                 pull_request.addon_description
             )
