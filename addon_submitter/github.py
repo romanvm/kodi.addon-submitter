@@ -64,7 +64,8 @@ def _create_addon_directory(workdir: str, zipaddon: ZippedAddon) -> None:
 
 
 def _prepare_pr_branch(repo: str, branch: str, workdir: str,
-                       addon_id: str, addon_version: str) -> None:
+                       addon_id: str, addon_version: str,
+                       new_pull_request: bool) -> None:
     """
     Create a git branch for pull request
 
@@ -73,6 +74,7 @@ def _prepare_pr_branch(repo: str, branch: str, workdir: str,
     :param workdir: working directory
     :param addon_id: addon ID
     :param addon_version: addon version
+    :param new_pull_request: is the PR new or old one
     """
     os.chdir(workdir)
     repo_url = REPO_URL_MASK.format(
@@ -84,36 +86,45 @@ def _prepare_pr_branch(repo: str, branch: str, workdir: str,
     os.chdir(repo)
     _execute(['git', 'config', 'user.name', settings.USER_NAME])
     _execute(['git', 'config', 'user.email', settings.USER_EMAIL])
-    _execute(['git', 'remote', 'add', 'upstream',
-             'https://github.com/{user}/{repo}.git'.format(
-                 user=settings.UPSTREAM_USER,
-                 repo=repo
-             )])
-    _execute(['git', 'fetch', 'upstream'])
-    _execute(['git', 'checkout', '-b', branch, '--track',
-             'origin/{0}'.format(branch)])
-    _execute(['git', 'merge', 'upstream/{0}'.format(branch)])
-    os.system('git branch -D ' + addon_id)
-    _execute(['git', 'checkout', '-b', addon_id])
-    shutil.rmtree(os.path.join(workdir, repo, addon_id), ignore_errors=True)
-    shutil.copytree(os.path.join(workdir, addon_id),
-                    os.path.join(workdir, repo, addon_id))
-    _execute(['git', 'add', '--all', '.'])
-    _execute(['git', 'commit', '-m', '"[{addon}] {version}"'.format(
-        addon=addon_id,
-        version=addon_version)
-              ])
+    if new_pull_request:
+        _execute(['git', 'remote', 'add', 'upstream',
+                 'https://github.com/{user}/{repo}.git'.format(
+                     user=settings.UPSTREAM_USER,
+                     repo=repo
+                 )])
+        _execute(['git', 'fetch', 'upstream'])
+        _execute(['git', 'checkout', '-b', branch, '--track',
+                 'origin/{0}'.format(branch)])
+        _execute(['git', 'merge', 'upstream/{0}'.format(branch)])
+        os.system('git branch -D ' + addon_id)
+        _execute(['git', 'checkout', '-b', addon_id])
+        shutil.rmtree(os.path.join(workdir, repo, addon_id), ignore_errors=True)
+        shutil.copytree(os.path.join(workdir, addon_id),
+                        os.path.join(workdir, repo, addon_id))
+        _execute(['git', 'add', '--all', '.'])
+        _execute(['git', 'commit', '-m', '"[{addon}] {version}"'.format(
+            addon=addon_id,
+            version=addon_version)
+                  ])
+    else:
+        _execute(['git', 'checkout', addon_id])
+        shutil.rmtree(os.path.join(workdir, repo, addon_id), ignore_errors=True)
+        shutil.copytree(os.path.join(workdir, addon_id),
+                        os.path.join(workdir, repo, addon_id))
+        _execute(['git', 'add', '--all', '.'])
+        _execute(['git', 'commit', '--amend', '--no-edit'])
     _execute(['git', 'push', '-f', 'origin', addon_id])
 
 
 def prepare_repository(zipped_addon: ZippedAddon,
-                       repo: str, branch: str) -> None:
+                       repo: str, branch: str, new_pull_request: bool) -> None:
     """
     Prepare the proxy repository for submitting a pull request
 
     :param zipped_addon: zipped addon
     :param repo: addon repository name
     :param branch: git branch (Kodi version codename)
+    :param new_pull_request: is the PR new or old one
     """
     os.chdir(settings.WORKDIR)
     _execute(['mkdir', zipped_addon.md5])
@@ -123,7 +134,8 @@ def prepare_repository(zipped_addon: ZippedAddon,
         _create_addon_directory(workdir, zipped_addon)
         _prepare_pr_branch(repo, branch, workdir,
                            zipped_addon.id,
-                           zipped_addon.version)
+                           zipped_addon.version,
+                           new_pull_request)
     except Exception:
         logging.exception('Error while preparing pull request!')
         raise

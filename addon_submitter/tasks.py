@@ -23,13 +23,15 @@ def process_submitted_addon(pk: int) -> None:
     pull_request = PullRequest.objects.get(pk=pk)
     logging.debug('Processing addon {0}'.format(pull_request))
     try:
+        new_pull_request = pull_request.pull_request_number is None
         zipped_addon = pull_request.get_zipped_addon()
         prepare_repository(
             zipped_addon,
             pull_request.git_repo,
-            pull_request.git_branch
+            pull_request.git_branch,
+            new_pull_request
         )
-        if pull_request.pull_request_number is None:
+        if new_pull_request:
             result = open_pull_request(
                 pull_request.git_repo,
                 pull_request.git_branch,

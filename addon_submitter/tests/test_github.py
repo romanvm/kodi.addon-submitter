@@ -19,7 +19,8 @@ class GitHubTestCase(TestCase):
         mock_zipaddon.id = 'plugin.video.foo'
         mock_zipaddon.version = '0.0.1'
         mock_zipaddon.is_folder = True
-        prepare_repository(mock_zipaddon, 'repo-plugins', 'krypton')
+        prepare_repository(mock_zipaddon, 'repo-plugins', 'krypton', True)
+        prepare_repository(mock_zipaddon, 'repo-plugins', 'krypton', False)
 
     @mock.patch('addon_submitter.github.requests')
     def test_git_hub_api(self, mock_requests):
