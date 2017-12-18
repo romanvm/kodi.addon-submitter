@@ -22,6 +22,8 @@ def index(request: HttpRequest) -> HttpResponse:
             )
             if queryset.exists():
                 pull_request = queryset[0]
+                pull_request.zipped_addon = request.FILES['zipped_addon']
+                pull_request.save()
             else:
                 pull_request = form.save()
             # Add the pull request to Celery task queue
