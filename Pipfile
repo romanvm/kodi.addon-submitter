@@ -7,7 +7,7 @@ name = "pypi"
 
 [packages]
 
-django = "==1.11.7"
+django = "==1.11.23"
 requests = "*"
 celery = "*"
 
